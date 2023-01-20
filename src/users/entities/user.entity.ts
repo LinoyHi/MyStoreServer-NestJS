@@ -86,4 +86,20 @@ export class User {
         default:false
     })
     manager:Boolean;
+
+    
+    @Column({
+        nullable: true,
+        type: 'varchar',
+        length: 20,
+        default: '',
+    })
+    gender:string
+
+    @Column({
+        nullable:true, 
+        type:Date,
+        default: null,
+    })
+    birthday:Date
 }
