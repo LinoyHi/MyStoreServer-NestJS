@@ -1,3 +1,4 @@
+import { CartDetails } from "src/cart/entities/cartDetails.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { KindCombo } from "./kindCombo.entity";
 import { Product } from "./product.entity";
@@ -20,4 +21,7 @@ export class ProductDetails{
 
     @OneToMany(()=>Review,(review)=>review.product)
     reviews: Review[]
+
+    @OneToMany(()=>CartDetails,(cart)=>cart.product)
+    carts:CartDetails[]
 }
