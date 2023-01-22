@@ -5,6 +5,7 @@ import {
 } from 'typeorm';
 import { IsEmail } from 'class-validator';
 import { Wishlist } from 'src/wishlist/entities/wishlist.entity';
+import { Order } from 'src/orders/entities/order.entity';
 
 @Entity()
 export class User {
@@ -107,4 +108,7 @@ export class User {
 
     @OneToMany(() => Wishlist, (wish) => wish.user)
     wishlist: Wishlist[];
+
+    @OneToMany(() => Order, (order) => order.user)
+    orders: Order[];
 }
