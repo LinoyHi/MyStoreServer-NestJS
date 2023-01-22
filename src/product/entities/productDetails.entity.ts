@@ -1,4 +1,5 @@
 import { CartDetails } from "src/cart/entities/cartDetails.entity";
+import { orderDetails } from "src/orders/entities/orderDetails.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { KindCombo } from "./kindCombo.entity";
 import { Product } from "./product.entity";
@@ -24,4 +25,7 @@ export class ProductDetails{
 
     @OneToMany(()=>CartDetails,(cart)=>cart.product)
     carts:CartDetails[]
+
+    @OneToMany(()=>orderDetails,(ord)=>ord.product)
+    orders:CartDetails[]
 }
