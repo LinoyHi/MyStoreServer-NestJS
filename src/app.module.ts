@@ -6,9 +6,10 @@ import { typeORMConfig } from './config/typeORM.config';
 import { UsersModule } from './users/users.module';
 import { ProductModule } from './product/product.module';
 import { CartModule } from './cart/cart.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
-  imports: [UsersModule, TypeOrmModule.forRoot(typeORMConfig), ProductModule, CartModule],
+  imports: [UsersModule, TypeOrmModule.forRoot(typeORMConfig), ProductModule, CartModule, WishlistModule],
   controllers: [AppController],
   providers: [AppService],
 })
