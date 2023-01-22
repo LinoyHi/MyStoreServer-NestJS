@@ -1,4 +1,5 @@
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Wishlist } from "src/wishlist/entities/wishlist.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "./category.entity";
 import { Img } from "./img.entity";
 import { ProductDetails } from "./productDetails.entity";
@@ -46,6 +47,9 @@ export class Product {
 
     @OneToMany(()=>ProductDetails,(det)=>det.product)
     productDetails:ProductDetails[]
+
+    @OneToMany(()=>Wishlist,(wish)=>wish.product)
+    wishlists:Wishlist[]
 
     inventory:number
 
