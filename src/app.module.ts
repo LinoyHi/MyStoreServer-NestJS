@@ -2,15 +2,15 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { typeORMConfig } from './config/typeORM.config';
-import { UsersModule } from './users/users.module';
-import { ProductModule } from './product/product.module';
-import { CartModule } from './cart/cart.module';
-import { WishlistModule } from './wishlist/wishlist.module';
 import { OrdersModule } from './orders/orders.module';
+import { UsersModule } from './users/users.module';
+import { CartsModule } from './cart/cart.module';
+import { ProductModule } from './product/product.module';
+import { typeORMConfig } from './config/typeORM.config';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
-  imports: [UsersModule, TypeOrmModule.forRoot(typeORMConfig), ProductModule, CartModule, WishlistModule, OrdersModule],
+  imports: [OrdersModule, UsersModule, CartsModule, ProductModule, TypeOrmModule.forRoot(typeORMConfig), WishlistModule,],
   controllers: [AppController],
   providers: [AppService],
 })
