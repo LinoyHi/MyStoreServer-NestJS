@@ -4,6 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { KindCombo } from "./kindCombo.entity";
 import { Product } from "./product.entity";
 import { Review } from "./review.entity";
+import { Sales } from "./sales.entity";
 
 @Entity()
 export class ProductDetails{
@@ -19,6 +20,9 @@ export class ProductDetails{
 
     @Column()
     unitInStock:number
+
+    @ManyToOne(()=>Sales,(sales)=>sales.id)
+    sale:Sales
 
     @OneToMany(()=>Review,(review)=>review.product)
     reviews: Review[]
