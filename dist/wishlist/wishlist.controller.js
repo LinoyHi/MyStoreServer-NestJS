@@ -15,14 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WishlistController = void 0;
 const common_1 = require("@nestjs/common");
 const wishlist_service_1 = require("./wishlist.service");
-const create_wishlist_dto_1 = require("./dto/create-wishlist.dto");
 const update_wishlist_dto_1 = require("./dto/update-wishlist.dto");
 let WishlistController = class WishlistController {
     constructor(wishlistService) {
         this.wishlistService = wishlistService;
     }
-    create(createWishlistDto) {
-        return this.wishlistService.create(createWishlistDto);
+    create(newwishlistItem, session) {
+        var _a;
+        newwishlistItem.user = (_a = session.user) === null || _a === void 0 ? void 0 : _a.name;
+        if (newwishlistItem.user) {
+            return this.wishlistService.create(newwishlistItem);
+        }
+        throw new common_1.HttpException('no user conected', common_1.HttpStatus.NOT_FOUND);
     }
     findAll() {
         return this.wishlistService.findAll();
@@ -33,15 +37,20 @@ let WishlistController = class WishlistController {
     update(id, updateWishlistDto) {
         return this.wishlistService.update(+id, updateWishlistDto);
     }
-    remove(id) {
-        return this.wishlistService.remove(+id);
+    remove(session, product) {
+        var _a;
+        if ((_a = session.user) === null || _a === void 0 ? void 0 : _a.name) {
+            return this.wishlistService.remove(session.user.name, product);
+        }
+        throw new common_1.HttpException('no user conected', common_1.HttpStatus.NOT_FOUND);
     }
 };
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Session)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_wishlist_dto_1.CreateWishlistDto]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], WishlistController.prototype, "create", null);
 __decorate([
@@ -66,10 +75,11 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], WishlistController.prototype, "update", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Delete)(),
+    __param(0, (0, common_1.Session)()),
+    __param(1, (0, common_1.Body)('product')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", void 0)
 ], WishlistController.prototype, "remove", null);
 WishlistController = __decorate([
