@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const class_validator_1 = require("class-validator");
+const wishlist_entity_1 = require("../../wishlist/entities/wishlist.entity");
+const order_entity_1 = require("../../orders/entities/order.entity");
 let User = class User {
 };
 __decorate([
@@ -122,6 +124,14 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], User.prototype, "birthday", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => wishlist_entity_1.Wishlist, (wish) => wish.user),
+    __metadata("design:type", Array)
+], User.prototype, "wishlist", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => order_entity_1.Order, (order) => order.user),
+    __metadata("design:type", Array)
+], User.prototype, "orders", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

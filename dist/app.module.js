@@ -11,14 +11,17 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
-const typeORM_config_1 = require("./config/typeORM.config");
+const orders_module_1 = require("./orders/orders.module");
 const users_module_1 = require("./users/users.module");
+const cart_module_1 = require("./cart/cart.module");
 const product_module_1 = require("./product/product.module");
+const typeORM_config_1 = require("./config/typeORM.config");
+const wishlist_module_1 = require("./wishlist/wishlist.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [users_module_1.UsersModule, typeorm_1.TypeOrmModule.forRoot(typeORM_config_1.typeORMConfig), product_module_1.ProductModule],
+        imports: [orders_module_1.OrdersModule, users_module_1.UsersModule, cart_module_1.CartsModule, product_module_1.ProductModule, typeorm_1.TypeOrmModule.forRoot(typeORM_config_1.typeORMConfig), wishlist_module_1.WishlistModule,],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
