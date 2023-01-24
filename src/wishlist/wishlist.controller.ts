@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, Session } from '@nestjs/common';
 import { WishlistService } from './wishlist.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
@@ -8,8 +8,12 @@ export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
   @Post()
-  create(@Body() createWishlistDto: CreateWishlistDto) {
-    return this.wishlistService.create(createWishlistDto);
+  create(@Body() newwishlistItem: {product:number,user:string},@Session() session:Record<string,any>) {
+    newwishlistItem.user= session.user?.name
+    if(newwishlistItem.user){
+      return this.wishlistService.create(newwishlistItem);
+    }
+    throw new HttpException('no user conected', HttpStatus.NOT_FOUND)
   }
 
   @Get()
@@ -27,8 +31,11 @@ export class WishlistController {
     return this.wishlistService.update(+id, updateWishlistDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishlistService.remove(+id);
+  @Delete()
+  remove(@Session() session: Record<string,any>,@Body('product') product:number) {
+    if(session.user?.name){
+      return this.wishlistService.remove(session.user.name,product);
+    }
+    throw new HttpException('no user conected', HttpStatus.NOT_FOUND)
   }
 }
