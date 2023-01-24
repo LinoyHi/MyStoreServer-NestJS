@@ -1,3 +1,4 @@
+import { Wishlist } from "src/wishlist/entities/wishlist.entity";
 import { Category } from "./category.entity";
 import { Img } from "./img.entity";
 import { ProductDetails } from "./productDetails.entity";
@@ -10,6 +11,7 @@ export declare class Product {
     imgs: Img[];
     category: Category;
     productDetails: ProductDetails[];
+    wishlists: Wishlist[];
     inventory: number;
     colors: string[];
     sizes: string[];
