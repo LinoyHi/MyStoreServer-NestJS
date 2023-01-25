@@ -7,6 +7,7 @@ import { KindComboRepository } from './repositories/kindCombo.repository';
 import { ProductRepository } from './repositories/product.repository';
 import { ProductDetailsRepository } from './repositories/productDet.repository';
 import { UserRepository } from '../users/user.repository';
+import { WishListRepository } from '../wishlist/wishlist.repository';
 import { KindCombo } from './entities/kindCombo.entity';
 import { Product } from './entities/product.entity';
 import { Category } from './entities/category.entity';
@@ -18,7 +19,8 @@ export class ProductsService {
     private imgRipo: ImgsRepository,
     private categoryRipo: CategoryRepository,
     private ProductDetRipo: ProductDetailsRepository,
-    private userRipo: UserRepository
+    private userRipo: UserRepository,
+    private wishRipo: WishListRepository,
   ) { }
 
   async create(createProductDto: CreateProductDto,
@@ -86,8 +88,40 @@ export class ProductsService {
     return mainCaragories
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll(category: string | undefined, user: string | undefined) {
+    let items
+    category ? items = await this.productRipo.find({
+      where: { category: { categoryName: category } },
+      relations: ['category']
+    })
+    : items = await this.productRipo.find()
+    let wishlist = [];
+    if (user) {
+      const customer = await this.userRipo.find({ name: user })
+      const allwishlist = await this.wishRipo.find({
+        where: { user: customer[0] },
+        relations: ['product']
+      })
+      for (const wish of allwishlist) {
+        wishlist.push(wish.product.id)
+      }
+    }
+    for (const item of items) {
+      if (wishlist.includes(item.id)) {
+        item.wish = true
+      }
+      const amount = await this.ProductDetRipo.find({
+        where: { product: { id: item.id } },
+        select: ['unitInStock'],
+        relations: ['product']
+      })
+      let sum = 0
+      for (const a of amount) {
+        sum += a.unitInStock
+      }
+      item.inventory = sum
+    }
+    return JSON.stringify(items)
   }
 
   findOne(id: number) {

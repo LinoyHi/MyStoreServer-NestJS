@@ -7,11 +7,14 @@ import { ProductDetailsRepository } from './repositories/productDet.repository';
 import { ImgsRepository } from './repositories/imgs.repository';
 import { KindComboRepository } from './repositories/kindCombo.repository';
 import { CategoryRepository } from './repositories/category.repository';
+import { CartRepository } from '../cart/cart.repository';
+import { CartDetailsRepository } from '../cart/cartDetails.repository';
+import { WishListRepository } from '../wishlist/wishlist.repository';
 import { UserRepository } from '../users/user.repository';
 
 @Module({
   imports:[TypeOrmModule.forFeature([ProductRepository,ProductDetailsRepository,ImgsRepository,
-    KindComboRepository,CategoryRepository,UserRepository])],
+    KindComboRepository,CategoryRepository,CartRepository,CartDetailsRepository,WishListRepository,UserRepository])],
   controllers: [ProductsController],
   providers: [ProductsService],
   exports:[ProductsService]

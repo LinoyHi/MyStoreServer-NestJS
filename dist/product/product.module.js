@@ -16,13 +16,16 @@ const productDet_repository_1 = require("./repositories/productDet.repository");
 const imgs_repository_1 = require("./repositories/imgs.repository");
 const kindCombo_repository_1 = require("./repositories/kindCombo.repository");
 const category_repository_1 = require("./repositories/category.repository");
+const cart_repository_1 = require("../cart/cart.repository");
+const cartDetails_repository_1 = require("../cart/cartDetails.repository");
+const wishlist_repository_1 = require("../wishlist/wishlist.repository");
 const user_repository_1 = require("../users/user.repository");
 let ProductModule = class ProductModule {
 };
 ProductModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([product_repository_1.ProductRepository, productDet_repository_1.ProductDetailsRepository, imgs_repository_1.ImgsRepository,
-                kindCombo_repository_1.KindComboRepository, category_repository_1.CategoryRepository, user_repository_1.UserRepository])],
+                kindCombo_repository_1.KindComboRepository, category_repository_1.CategoryRepository, cart_repository_1.CartRepository, cartDetails_repository_1.CartDetailsRepository, wishlist_repository_1.WishListRepository, user_repository_1.UserRepository])],
         controllers: [product_controller_1.ProductsController],
         providers: [product_service_1.ProductsService],
         exports: [product_service_1.ProductsService]

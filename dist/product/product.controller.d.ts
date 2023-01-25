@@ -22,8 +22,9 @@ export declare class ProductsController {
             parent: string;
         };
     }): Promise<string>;
+    findAll(session: Record<string, any>): Promise<string>;
     returnAllCatagories(): Promise<import("./entities/category.entity").Category[]>;
-    findAll(): string;
+    findCategory(category: string, session: Record<string, any>): Promise<string>;
     findOne(id: string): string;
     update(id: string, updateProductDto: UpdateProductDto): string;
     remove(id: string): string;
