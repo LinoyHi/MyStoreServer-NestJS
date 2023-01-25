@@ -26,15 +26,15 @@ export class ProductsController {
   async returnAllCatagories() {
     return await this.productService.findAllCatagories()
   }
+  
+  @Get(':id')
+  findOne(@Param('id') id: string,@Session() session:Record<string,any>) {
+    return this.productService.findOne(+id,session.user?.name);
+  }
 
   @Get('/category/:categoryname')
   findCategory(@Param('categoryname') category: string, @Session() session: Record<string, any>) {
     return this.productService.findAll(category, session.user?.name)
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
   }
 
   @Patch(':id')

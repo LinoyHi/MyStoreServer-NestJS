@@ -136,8 +136,53 @@ let ProductsService = class ProductsService {
         }
         return JSON.stringify(items);
     }
-    findOne(id) {
-        return `This action returns a #${id} product`;
+    async findOne(id, user) {
+        let wishlist = [];
+        if (user) {
+            const customer = await this.userRipo.find({ name: user });
+            const allwishlist = await this.wishRipo.find({
+                where: { user: customer[0] },
+                relations: ['product']
+            });
+            for (const wish of allwishlist) {
+                wishlist.push(wish.product.id);
+            }
+        }
+        const items = await this.productRipo.find({ id });
+        const item = items[0];
+        const imgs = await this.imgRipo.find({
+            where: { product: { id: item.id } },
+            relations: ['product']
+        });
+        item.imgs = imgs;
+        const det = await this.ProductDetRipo.find({
+            select: ['kinds', 'id', 'unitInStock'],
+            where: { product: { id: item.id } },
+            relations: ['kinds', 'product'],
+        });
+        let sum = 0;
+        let colors = [];
+        let sizes = [];
+        item.prodDet = [];
+        for (const a of det) {
+            sum += a.unitInStock;
+            const color = a.kinds.color;
+            const size = a.kinds.size;
+            if (!colors.includes(color)) {
+                colors.push(color);
+            }
+            if (!sizes.includes(size)) {
+                sizes.push(size);
+            }
+            item.prodDet.push({ color, size, quantity: a.unitInStock, id: a.kinds.id });
+        }
+        item.colors = colors;
+        item.sizes = sizes;
+        item.inventory = sum;
+        if (wishlist.includes(item.id)) {
+            item.wish = true;
+        }
+        return JSON.stringify(item);
     }
     update(id, updateProductDto) {
         return `This action updates a #${id} product`;
