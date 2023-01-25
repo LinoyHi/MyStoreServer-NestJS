@@ -91,11 +91,23 @@ let ProductsService = class ProductsService {
     }
     async findAll(category, user) {
         let items;
-        category ? items = await this.productRipo.find({
-            where: { category: { categoryName: category } },
-            relations: ['category']
-        })
-            : items = await this.productRipo.find();
+        if (category) {
+            const cat = await this.categoryRipo.find({ categoryName: category });
+            const secondCats = await this.categoryRipo.find({ parentcategory: { id: cat[0].id } });
+            items = await this.productRipo.find({
+                where: { category: { categoryName: category } },
+                relations: ['category']
+            });
+            for (const c of secondCats) {
+                items = [...items, ...await this.productRipo.find({
+                        where: { category: { categoryName: c.categoryName } },
+                        relations: ['category']
+                    })];
+            }
+        }
+        else {
+            items = await this.productRipo.find();
+        }
         let wishlist = [];
         if (user) {
             const customer = await this.userRipo.find({ name: user });
