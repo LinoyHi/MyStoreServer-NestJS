@@ -30,12 +30,13 @@ let ProductsController = class ProductsController {
     async returnAllCatagories() {
         return await this.productService.findAllCatagories();
     }
+    findOne(id, session) {
+        var _a;
+        return this.productService.findOne(+id, (_a = session.user) === null || _a === void 0 ? void 0 : _a.name);
+    }
     findCategory(category, session) {
         var _a;
         return this.productService.findAll(category, (_a = session.user) === null || _a === void 0 ? void 0 : _a.name);
-    }
-    findOne(id) {
-        return this.productService.findOne(+id);
     }
     update(id, updateProductDto) {
         return this.productService.update(+id, updateProductDto);
@@ -65,6 +66,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "returnAllCatagories", null);
 __decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Session)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ProductsController.prototype, "findOne", null);
+__decorate([
     (0, common_1.Get)('/category/:categoryname'),
     __param(0, (0, common_1.Param)('categoryname')),
     __param(1, (0, common_1.Session)()),
@@ -72,13 +81,6 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findCategory", null);
-__decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], ProductsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),

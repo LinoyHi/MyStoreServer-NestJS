@@ -32,7 +32,7 @@ export declare class ProductsService {
     }): Promise<string>;
     findAllCatagories(): Promise<Category[]>;
     findAll(category: string | undefined, user: string | undefined): Promise<string>;
-    findOne(id: number): string;
+    findOne(id: number, user: string | undefined): Promise<string>;
     update(id: number, updateProductDto: UpdateProductDto): string;
     remove(id: number): string;
 }
