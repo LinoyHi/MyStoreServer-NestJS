@@ -1,18 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Session } from '@nestjs/common';
 import { ProductsService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 
 @Controller('products')
-export class ProductsController  {
-  constructor(private readonly productService: ProductsService) {}
+export class ProductsController {
+  constructor(private readonly productService: ProductsService) { }
 
   @Post()
-  create(@Body() product:{createProductDto: CreateProductDto, imgs:{link:string,description:string,product:Product|undefined}[],
-                          kind:{color:string,size:string,quantity:number}[],
-                          category:{name:string, parent:string }}) {
+  create(@Body() product: {
+    createProductDto: CreateProductDto, imgs: { link: string, description: string, product: Product | undefined }[],
+    kind: { color: string, size: string, quantity: number }[],
+    category: { name: string, parent: string }
+  }) {
     return this.productService.create(product.createProductDto, product.imgs, product.kind, product.category);
+  }
+
+  @Get()
+  findAll(@Session() session: Record<string, any>) {
+    return this.productService.findAll(undefined, session.user?.name);
   }
 
   @Get('/catagories')
@@ -20,9 +27,9 @@ export class ProductsController  {
     return await this.productService.findAllCatagories()
   }
 
-  @Get()
-  findAll() {
-    return this.productService.findAll();
+  @Get('/category/:categoryname')
+  findCategory(@Param('categoryname') category: string, @Session() session: Record<string, any>) {
+    return this.productService.findAll(category, session.user?.name)
   }
 
   @Get(':id')

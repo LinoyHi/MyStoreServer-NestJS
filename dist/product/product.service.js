@@ -17,14 +17,16 @@ const kindCombo_repository_1 = require("./repositories/kindCombo.repository");
 const product_repository_1 = require("./repositories/product.repository");
 const productDet_repository_1 = require("./repositories/productDet.repository");
 const user_repository_1 = require("../users/user.repository");
+const wishlist_repository_1 = require("../wishlist/wishlist.repository");
 let ProductsService = class ProductsService {
-    constructor(productRipo, kindRipo, imgRipo, categoryRipo, ProductDetRipo, userRipo) {
+    constructor(productRipo, kindRipo, imgRipo, categoryRipo, ProductDetRipo, userRipo, wishRipo) {
         this.productRipo = productRipo;
         this.kindRipo = kindRipo;
         this.imgRipo = imgRipo;
         this.categoryRipo = categoryRipo;
         this.ProductDetRipo = ProductDetRipo;
         this.userRipo = userRipo;
+        this.wishRipo = wishRipo;
     }
     async create(createProductDto, imgs, kind, category) {
         let parentcategory = await this.categoryRipo.find({ categoryName: category.parent });
@@ -87,8 +89,40 @@ let ProductsService = class ProductsService {
         }
         return mainCaragories;
     }
-    findAll() {
-        return `This action returns all product`;
+    async findAll(category, user) {
+        let items;
+        category ? items = await this.productRipo.find({
+            where: { category: { categoryName: category } },
+            relations: ['category']
+        })
+            : items = await this.productRipo.find();
+        let wishlist = [];
+        if (user) {
+            const customer = await this.userRipo.find({ name: user });
+            const allwishlist = await this.wishRipo.find({
+                where: { user: customer[0] },
+                relations: ['product']
+            });
+            for (const wish of allwishlist) {
+                wishlist.push(wish.product.id);
+            }
+        }
+        for (const item of items) {
+            if (wishlist.includes(item.id)) {
+                item.wish = true;
+            }
+            const amount = await this.ProductDetRipo.find({
+                where: { product: { id: item.id } },
+                select: ['unitInStock'],
+                relations: ['product']
+            });
+            let sum = 0;
+            for (const a of amount) {
+                sum += a.unitInStock;
+            }
+            item.inventory = sum;
+        }
+        return JSON.stringify(items);
     }
     findOne(id) {
         return `This action returns a #${id} product`;
@@ -107,7 +141,8 @@ ProductsService = __decorate([
         imgs_repository_1.ImgsRepository,
         category_repository_1.CategoryRepository,
         productDet_repository_1.ProductDetailsRepository,
-        user_repository_1.UserRepository])
+        user_repository_1.UserRepository,
+        wishlist_repository_1.WishListRepository])
 ], ProductsService);
 exports.ProductsService = ProductsService;
 //# sourceMappingURL=product.service.js.map

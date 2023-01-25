@@ -23,11 +23,16 @@ let ProductsController = class ProductsController {
     create(product) {
         return this.productService.create(product.createProductDto, product.imgs, product.kind, product.category);
     }
+    findAll(session) {
+        var _a;
+        return this.productService.findAll(undefined, (_a = session.user) === null || _a === void 0 ? void 0 : _a.name);
+    }
     async returnAllCatagories() {
         return await this.productService.findAllCatagories();
     }
-    findAll() {
-        return this.productService.findAll();
+    findCategory(category, session) {
+        var _a;
+        return this.productService.findAll(category, (_a = session.user) === null || _a === void 0 ? void 0 : _a.name);
     }
     findOne(id) {
         return this.productService.findOne(+id);
@@ -47,17 +52,26 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "create", null);
 __decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Session)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ProductsController.prototype, "findAll", null);
+__decorate([
     (0, common_1.Get)('/catagories'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "returnAllCatagories", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('/category/:categoryname'),
+    __param(0, (0, common_1.Param)('categoryname')),
+    __param(1, (0, common_1.Session)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
-], ProductsController.prototype, "findAll", null);
+], ProductsController.prototype, "findCategory", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
