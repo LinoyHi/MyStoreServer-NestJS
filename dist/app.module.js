@@ -17,7 +17,16 @@ const cart_module_1 = require("./cart/cart.module");
 const product_module_1 = require("./product/product.module");
 const typeORM_config_1 = require("./config/typeORM.config");
 const wishlist_module_1 = require("./wishlist/wishlist.module");
+const userCheck_middleware_1 = require("./userCheck.middleware");
+const product_controller_1 = require("./product/product.controller");
+const wishlist_controller_1 = require("./wishlist/wishlist.controller");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply(userCheck_middleware_1.UserCheckMiddleware)
+            .exclude({ path: 'products', method: common_1.RequestMethod.GET }, { path: 'products/(.*)', method: common_1.RequestMethod.GET })
+            .forRoutes(product_controller_1.ProductsController, wishlist_controller_1.WishlistController);
+    }
 };
 AppModule = __decorate([
     (0, common_1.Module)({

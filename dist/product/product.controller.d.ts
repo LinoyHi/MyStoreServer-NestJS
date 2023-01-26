@@ -1,34 +1,16 @@
 import { ProductsService } from './product.service';
-import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
-import { User } from 'src/users/entities/user.entity';
 export declare class ProductsController {
     private readonly productService;
     constructor(productService: ProductsService);
-    create(product: {
-        createProductDto: CreateProductDto;
-        imgs: {
-            link: string;
-            description: string;
-            product: Product | undefined;
-        }[];
-        kind: {
-            color: string;
-            size: string;
-            quantity: number;
-        }[];
-        category: {
-            name: string;
-            parent: string;
-        };
-    }): Promise<string>;
-    addtocart(id: string, session: Record<string, any>, bod: {
-        quantity: number;
-        user: User;
+    create({ product }: {
+        product: any;
+    }, session: Record<string, any>): Promise<string>;
+    addtocart(id: string, session: Record<string, any>, { quantity }: {
+        quantity: any;
     }): Promise<string>;
     findAll(session: Record<string, any>): Promise<string>;
-    returnAllCatagories(): Promise<import("./entities/category.entity").Category[]>;
+    returnAllCatagories(userName: string): Promise<import("./entities/category.entity").Category[]>;
     findOne(id: string, session: Record<string, any>): Promise<string>;
     findCategory(category: string, session: Record<string, any>): Promise<string>;
     update(id: string, updateProductDto: UpdateProductDto): string;

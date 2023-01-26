@@ -20,20 +20,21 @@ let ProductsController = class ProductsController {
     constructor(productService) {
         this.productService = productService;
     }
-    create(product) {
-        return this.productService.create(product.createProductDto, product.imgs, product.kind, product.category);
-    }
-    addtocart(id, session, bod) {
-        if (!session.user) {
-            session.user = bod.user;
+    create({ product }, session) {
+        var _a;
+        if ((_a = session.user) === null || _a === void 0 ? void 0 : _a.manager) {
+            return this.productService.create(product.createProductDto, product.imgs, product.kind, product.category);
         }
-        return this.productService.addToCart(+id, session.user, +bod.quantity);
+        throw new common_1.HttpException('not allowed', common_1.HttpStatus.FORBIDDEN);
+    }
+    addtocart(id, session, { quantity }) {
+        return this.productService.addToCart(+id, session.user, +quantity);
     }
     findAll(session) {
         var _a;
         return this.productService.findAll(undefined, (_a = session.user) === null || _a === void 0 ? void 0 : _a.name);
     }
-    async returnAllCatagories() {
+    async returnAllCatagories(userName) {
         return await this.productService.findAllCatagories();
     }
     findOne(id, session) {
@@ -54,8 +55,9 @@ let ProductsController = class ProductsController {
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Session)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "create", null);
 __decorate([
@@ -75,9 +77,10 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)('/catagories'),
+    (0, common_1.Get)('/catagories/:name'),
+    __param(0, (0, common_1.Param)('name')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "returnAllCatagories", null);
 __decorate([

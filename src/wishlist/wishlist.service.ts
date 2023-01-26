@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { User } from 'src/users/entities/user.entity';
 import { ProductsService } from '../product/product.service';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { UserRepository } from '../users/user.repository';
