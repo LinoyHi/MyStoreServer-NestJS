@@ -18,8 +18,10 @@ const product_repository_1 = require("./repositories/product.repository");
 const productDet_repository_1 = require("./repositories/productDet.repository");
 const user_repository_1 = require("../users/user.repository");
 const wishlist_repository_1 = require("../wishlist/wishlist.repository");
+const cartDetails_repository_1 = require("../cart/cartDetails.repository");
+const cart_repository_1 = require("../cart/cart.repository");
 let ProductsService = class ProductsService {
-    constructor(productRipo, kindRipo, imgRipo, categoryRipo, ProductDetRipo, userRipo, wishRipo) {
+    constructor(productRipo, kindRipo, imgRipo, categoryRipo, ProductDetRipo, userRipo, wishRipo, cartRipo, cartDetRipo) {
         this.productRipo = productRipo;
         this.kindRipo = kindRipo;
         this.imgRipo = imgRipo;
@@ -27,6 +29,8 @@ let ProductsService = class ProductsService {
         this.ProductDetRipo = ProductDetRipo;
         this.userRipo = userRipo;
         this.wishRipo = wishRipo;
+        this.cartRipo = cartRipo;
+        this.cartDetRipo = cartDetRipo;
     }
     async create(createProductDto, imgs, kind, category) {
         let parentcategory = await this.categoryRipo.find({ categoryName: category.parent });
@@ -174,7 +178,7 @@ let ProductsService = class ProductsService {
             if (!sizes.includes(size)) {
                 sizes.push(size);
             }
-            item.prodDet.push({ color, size, quantity: a.unitInStock, id: a.kinds.id });
+            item.prodDet.push({ color, size, quantity: a.unitInStock, id: a.id });
         }
         item.colors = colors;
         item.sizes = sizes;
@@ -183,6 +187,50 @@ let ProductsService = class ProductsService {
             item.wish = true;
         }
         return JSON.stringify(item);
+    }
+    async addToCart(id, user, quantity) {
+        var _a;
+        let exsistingcart = await this.cartRipo.find({
+            username: { name: user.name }
+        });
+        const item = await this.ProductDetRipo.find({
+            select: ['product', 'id', 'unitInStock'],
+            where: { id },
+            relations: ['product'],
+        });
+        const exsistingProd = await this.cartDetRipo.find({
+            where: [{ product: item[0].id }],
+            relations: ['product', 'cartid']
+        });
+        if (exsistingcart.length) {
+            const newamount = exsistingcart[0].quantity + quantity;
+            if (item[0].unitInStock < ((_a = exsistingProd[0]) === null || _a === void 0 ? void 0 : _a.quantity) + quantity) {
+                return JSON.stringify({ errors: true, amountInCart: exsistingProd[0].quantity });
+            }
+            exsistingcart[0].price += item[0].product.price * quantity;
+            exsistingcart[0].quantity = newamount;
+            this.cartRipo.save(exsistingcart);
+        }
+        else {
+            const cart = this.cartRipo.create([{ username: { name: user.name }, quantity, price: item[0].product.price * quantity }]);
+            await this.cartRipo.save(cart);
+            exsistingcart = await this.cartRipo.find({ username: { name: user.name } });
+        }
+        let cartDet;
+        for (const product of exsistingProd) {
+            if (product.cartid.id === exsistingcart[0].id) {
+                cartDet = product;
+            }
+        }
+        if (cartDet) {
+            cartDet.price += (item[0].product.price * quantity);
+            cartDet.quantity += quantity;
+        }
+        else {
+            cartDet = this.cartDetRipo.create({ price: item[0].product.price * quantity, quantity, cartid: exsistingcart[0], product: item[0] });
+        }
+        this.cartDetRipo.save(cartDet);
+        return JSON.stringify({ errors: false });
     }
     update(id, updateProductDto) {
         return `This action updates a #${id} product`;
@@ -199,7 +247,9 @@ ProductsService = __decorate([
         category_repository_1.CategoryRepository,
         productDet_repository_1.ProductDetailsRepository,
         user_repository_1.UserRepository,
-        wishlist_repository_1.WishListRepository])
+        wishlist_repository_1.WishListRepository,
+        cart_repository_1.CartRepository,
+        cartDetails_repository_1.CartDetailsRepository])
 ], ProductsService);
 exports.ProductsService = ProductsService;
 //# sourceMappingURL=product.service.js.map

@@ -9,6 +9,9 @@ import { UserRepository } from '../users/user.repository';
 import { WishListRepository } from '../wishlist/wishlist.repository';
 import { Product } from './entities/product.entity';
 import { Category } from './entities/category.entity';
+import { CartDetailsRepository } from 'src/cart/cartDetails.repository';
+import { CartRepository } from 'src/cart/cart.repository';
+import { User } from 'src/users/entities/user.entity';
 export declare class ProductsService {
     private productRipo;
     private kindRipo;
@@ -17,7 +20,9 @@ export declare class ProductsService {
     private ProductDetRipo;
     private userRipo;
     private wishRipo;
-    constructor(productRipo: ProductRepository, kindRipo: KindComboRepository, imgRipo: ImgsRepository, categoryRipo: CategoryRepository, ProductDetRipo: ProductDetailsRepository, userRipo: UserRepository, wishRipo: WishListRepository);
+    private cartRipo;
+    private cartDetRipo;
+    constructor(productRipo: ProductRepository, kindRipo: KindComboRepository, imgRipo: ImgsRepository, categoryRipo: CategoryRepository, ProductDetRipo: ProductDetailsRepository, userRipo: UserRepository, wishRipo: WishListRepository, cartRipo: CartRepository, cartDetRipo: CartDetailsRepository);
     create(createProductDto: CreateProductDto, imgs: {
         link: string;
         description: string;
@@ -33,6 +38,7 @@ export declare class ProductsService {
     findAllCatagories(): Promise<Category[]>;
     findAll(category: string | undefined, user: string | undefined): Promise<string>;
     findOne(id: number, user: string | undefined): Promise<string>;
+    addToCart(id: number, user: User, quantity: number): Promise<string>;
     update(id: number, updateProductDto: UpdateProductDto): string;
     remove(id: number): string;
 }

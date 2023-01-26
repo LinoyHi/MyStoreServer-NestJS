@@ -3,6 +3,7 @@ import { ProductsService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('products')
 export class ProductsController {
@@ -15,6 +16,12 @@ export class ProductsController {
     category: { name: string, parent: string }
   }) {
     return this.productService.create(product.createProductDto, product.imgs, product.kind, product.category);
+  }
+  
+  @Post('/:itemid')
+  addtocart(@Param('itemid') id: string,@Session() session:Record<string,any>,@Body() bod:{quantity:number,user:User}) {
+    if(!session.user) {session.user= bod.user}
+    return this.productService.addToCart(+id,session.user,+bod.quantity)
   }
 
   @Get()

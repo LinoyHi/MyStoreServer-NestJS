@@ -23,6 +23,12 @@ let ProductsController = class ProductsController {
     create(product) {
         return this.productService.create(product.createProductDto, product.imgs, product.kind, product.category);
     }
+    addtocart(id, session, bod) {
+        if (!session.user) {
+            session.user = bod.user;
+        }
+        return this.productService.addToCart(+id, session.user, +bod.quantity);
+    }
     findAll(session) {
         var _a;
         return this.productService.findAll(undefined, (_a = session.user) === null || _a === void 0 ? void 0 : _a.name);
@@ -52,6 +58,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('/:itemid'),
+    __param(0, (0, common_1.Param)('itemid')),
+    __param(1, (0, common_1.Session)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", void 0)
+], ProductsController.prototype, "addtocart", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Session)()),
