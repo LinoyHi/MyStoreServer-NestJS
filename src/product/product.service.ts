@@ -11,6 +11,9 @@ import { WishListRepository } from '../wishlist/wishlist.repository';
 import { KindCombo } from './entities/kindCombo.entity';
 import { Product } from './entities/product.entity';
 import { Category } from './entities/category.entity';
+import { CartDetailsRepository } from 'src/cart/cartDetails.repository';
+import { CartRepository } from 'src/cart/cart.repository';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -21,6 +24,8 @@ export class ProductsService {
     private ProductDetRipo: ProductDetailsRepository,
     private userRipo: UserRepository,
     private wishRipo: WishListRepository,
+    private cartRipo: CartRepository,
+    private cartDetRipo: CartDetailsRepository,
   ) { }
 
   async create(createProductDto: CreateProductDto,
@@ -172,7 +177,7 @@ export class ProductsService {
       if (!sizes.includes(size)) {
         sizes.push(size)
       }
-      item.prodDet.push({ color, size, quantity: a.unitInStock, id: a.kinds.id })
+      item.prodDet.push({ color, size, quantity: a.unitInStock, id: a.id })
     }
     item.colors = colors
     item.sizes = sizes
@@ -181,6 +186,48 @@ export class ProductsService {
       item.wish = true
     }
     return JSON.stringify(item)
+  }
+
+  async addToCart(id: number, user: User, quantity: number) {
+    let exsistingcart = await this.cartRipo.find({ 
+      username: { name: user.name } })
+    const item = await this.ProductDetRipo.find({
+      select: ['product', 'id', 'unitInStock'],
+      where: { id },
+      relations: ['product'],
+    })
+    const exsistingProd = await this.cartDetRipo.find({
+      where: [{ product: item[0].id }],
+      relations: ['product', 'cartid']
+    })
+    if (exsistingcart.length) {
+      const newamount = exsistingcart[0].quantity + quantity
+      if (item[0].unitInStock < exsistingProd[0]?.quantity+quantity) {
+        return JSON.stringify({ errors: true, amountInCart: exsistingProd[0].quantity});
+      }
+      exsistingcart[0].price += item[0].product.price * quantity
+      exsistingcart[0].quantity = newamount
+      this.cartRipo.save(exsistingcart)
+    } else {
+      const cart = this.cartRipo.create([{ username: { name: user.name }, quantity, price: item[0].product.price * quantity }])
+      await this.cartRipo.save(cart)
+      exsistingcart = await this.cartRipo.find({ username: { name: user.name } })
+    }
+    let cartDet;
+    for (const product of exsistingProd) {
+      if (product.cartid.id === exsistingcart[0].id) {
+        cartDet = product
+      }
+    }
+    if (cartDet) {
+      cartDet.price += (item[0].product.price * quantity)
+      cartDet.quantity += quantity
+    }
+    else {
+      cartDet = this.cartDetRipo.create({ price: item[0].product.price * quantity, quantity, cartid: exsistingcart[0], product: item[0] })
+    }
+    this.cartDetRipo.save(cartDet)
+    return JSON.stringify({ errors: false })
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
