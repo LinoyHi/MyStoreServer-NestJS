@@ -1,3 +1,4 @@
+import { User } from 'src/users/entities/user.entity';
 import { ProductsService } from '../product/product.service';
 import { ProductRepository } from '../product/repositories/product.repository';
 import { UserRepository } from '../users/user.repository';
@@ -13,7 +14,7 @@ export declare class WishlistService {
         user: string;
         product: number;
     }): Promise<{
-        user: import("../users/entities/user.entity").User;
+        user: User;
         product: import("../product/entities/product.entity").Product;
     } & import("./entities/wishlist.entity").Wishlist>;
     findAll(): string;
