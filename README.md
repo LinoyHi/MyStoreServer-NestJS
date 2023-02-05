@@ -1,8 +1,9 @@
-# about MyStoreServer-NestJs
+# about MyStoreServer-NestJS
 this is a project in progress that works along my other project <a href='https://github.com/LinoyHi/MyStore-React'>MyStore-React</a>.\
 the satart of the project is based on my Forms project and you can find out more information about the forms modification at it's <a href='https://github.com/LinoyHi/Forms'>readMe</a>
 
 
+# NestJS readme
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
