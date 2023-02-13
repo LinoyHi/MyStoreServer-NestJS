@@ -20,8 +20,9 @@ const user_repository_1 = require("../users/user.repository");
 const wishlist_repository_1 = require("../wishlist/wishlist.repository");
 const cartDetails_repository_1 = require("../cart/cartDetails.repository");
 const cart_repository_1 = require("../cart/cart.repository");
+const review_repository_1 = require("./repositories/review.repository");
 let ProductsService = class ProductsService {
-    constructor(productRipo, kindRipo, imgRipo, categoryRipo, ProductDetRipo, userRipo, wishRipo, cartRipo, cartDetRipo) {
+    constructor(productRipo, kindRipo, imgRipo, categoryRipo, ProductDetRipo, userRipo, wishRipo, cartRipo, cartDetRipo, reviewRipo) {
         this.productRipo = productRipo;
         this.kindRipo = kindRipo;
         this.imgRipo = imgRipo;
@@ -31,6 +32,7 @@ let ProductsService = class ProductsService {
         this.wishRipo = wishRipo;
         this.cartRipo = cartRipo;
         this.cartDetRipo = cartDetRipo;
+        this.reviewRipo = reviewRipo;
     }
     async create(createProductDto, imgs, kind, category) {
         let parentcategory = await this.categoryRipo.find({ categoryName: category.parent });
@@ -160,13 +162,13 @@ let ProductsService = class ProductsService {
         });
         item.imgs = imgs;
         const det = await this.ProductDetRipo.find({
-            select: ['kinds', 'id', 'unitInStock'],
+            select: ['kinds', 'id', 'unitInStock', 'sale', 'reviews'],
             where: { product: { id: item.id } },
-            relations: ['kinds', 'product'],
+            relations: ['kinds', 'product', 'sale'],
         });
         let sum = 0;
-        let colors = [];
-        let sizes = [];
+        const colors = [];
+        const sizes = [];
         item.prodDet = [];
         for (const a of det) {
             sum += a.unitInStock;
@@ -178,8 +180,9 @@ let ProductsService = class ProductsService {
             if (!sizes.includes(size)) {
                 sizes.push(size);
             }
-            item.prodDet.push({ color, size, quantity: a.unitInStock, id: a.id });
+            item.prodDet.push({ color, size, quantity: a.unitInStock, id: a.id, sale: a.sale });
         }
+        item.reviews = await this.reviewRipo.find({ where: { product: { id: item.id } }, relations: ['user', 'kinds'] });
         item.colors = colors;
         item.sizes = sizes;
         item.inventory = sum;
@@ -249,7 +252,8 @@ ProductsService = __decorate([
         user_repository_1.UserRepository,
         wishlist_repository_1.WishListRepository,
         cart_repository_1.CartRepository,
-        cartDetails_repository_1.CartDetailsRepository])
+        cartDetails_repository_1.CartDetailsRepository,
+        review_repository_1.ReviewRepository])
 ], ProductsService);
 exports.ProductsService = ProductsService;
 //# sourceMappingURL=product.service.js.map

@@ -34,7 +34,7 @@ let ProductsController = class ProductsController {
         var _a;
         return this.productService.findAll(undefined, (_a = session.user) === null || _a === void 0 ? void 0 : _a.name);
     }
-    async returnAllCatagories(userName) {
+    async returnAllCatagories() {
         return await this.productService.findAllCatagories();
     }
     findOne(id, session) {
@@ -77,10 +77,9 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)('/catagories/:name'),
-    __param(0, (0, common_1.Param)('name')),
+    (0, common_1.Get)('/catagories'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "returnAllCatagories", null);
 __decorate([

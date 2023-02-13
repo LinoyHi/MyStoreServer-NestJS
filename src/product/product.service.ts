@@ -14,6 +14,7 @@ import { Category } from './entities/category.entity';
 import { CartDetailsRepository } from 'src/cart/cartDetails.repository';
 import { CartRepository } from 'src/cart/cart.repository';
 import { User } from 'src/users/entities/user.entity';
+import { ReviewRepository } from './repositories/review.repository';
 
 @Injectable()
 export class ProductsService {
@@ -26,6 +27,7 @@ export class ProductsService {
     private wishRipo: WishListRepository,
     private cartRipo: CartRepository,
     private cartDetRipo: CartDetailsRepository,
+    private reviewRipo: ReviewRepository,
   ) { }
 
   async create(createProductDto: CreateProductDto,
@@ -33,7 +35,7 @@ export class ProductsService {
     kind: { color: string, size: string, quantity: number }[],
     category: { name: string, parent: string }) {
     let parentcategory = await this.categoryRipo.find({ categoryName: category.parent })
-    let cat = await this.categoryRipo.find({ categoryName: category.name})
+    let cat = await this.categoryRipo.find({ categoryName: category.name })
     if (!cat[0]) {
       let NewCategory: Category[]
       if (category.parent) {
@@ -95,21 +97,21 @@ export class ProductsService {
 
   async findAll(category: string | undefined, user: string | undefined) {
     let items
-    if(category){
-      const cat = await this.categoryRipo.find({categoryName:category})
-      const secondCats= await this.categoryRipo.find({parentcategory:{id:cat[0].id}})
+    if (category) {
+      const cat = await this.categoryRipo.find({ categoryName: category })
+      const secondCats = await this.categoryRipo.find({ parentcategory: { id: cat[0].id } })
       items = await this.productRipo.find({
         where: { category: { categoryName: category } },
         relations: ['category']
       })
-      for(const c of secondCats){
+      for (const c of secondCats) {
         items = [...items, ...await this.productRipo.find({
           where: { category: { categoryName: c.categoryName } },
           relations: ['category']
         })]
       }
-    } 
-    else {items = await this.productRipo.find()}
+    }
+    else { items = await this.productRipo.find() }
     let wishlist = [];
     if (user) {
       const customer = await this.userRipo.find({ name: user })
@@ -153,19 +155,19 @@ export class ProductsService {
     }
     const items = await this.productRipo.find({ id })
     const item = items[0]
-    const imgs = await this.imgRipo.find({ 
-      where: {product: { id: item.id }},
+    const imgs = await this.imgRipo.find({
+      where: { product: { id: item.id } },
       relations: ['product']
     })
     item.imgs = imgs
     const det = await this.ProductDetRipo.find({
-      select: ['kinds', 'id', 'unitInStock'],
+      select: ['kinds', 'id', 'unitInStock', 'sale', 'reviews'],
       where: { product: { id: item.id } },
-      relations: ['kinds', 'product'],
+      relations: ['kinds', 'product', 'sale'],
     })
     let sum = 0
-    let colors = []
-    let sizes = []
+    const colors = []
+    const sizes = []
     item.prodDet = []
     for (const a of det) {
       sum += a.unitInStock
@@ -177,8 +179,9 @@ export class ProductsService {
       if (!sizes.includes(size)) {
         sizes.push(size)
       }
-      item.prodDet.push({ color, size, quantity: a.unitInStock, id: a.id })
+      item.prodDet.push({ color, size, quantity: a.unitInStock, id: a.id, sale: a.sale })
     }
+    item.reviews = await this.reviewRipo.find({where:{product:{id:item.id}}, relations: ['user','kinds']})
     item.colors = colors
     item.sizes = sizes
     item.inventory = sum
@@ -189,8 +192,9 @@ export class ProductsService {
   }
 
   async addToCart(id: number, user: User, quantity: number) {
-    let exsistingcart = await this.cartRipo.find({ 
-      username: { name: user.name } })
+    let exsistingcart = await this.cartRipo.find({
+      username: { name: user.name }
+    })
     const item = await this.ProductDetRipo.find({
       select: ['product', 'id', 'unitInStock'],
       where: { id },
@@ -202,8 +206,8 @@ export class ProductsService {
     })
     if (exsistingcart.length) {
       const newamount = exsistingcart[0].quantity + quantity
-      if (item[0].unitInStock < exsistingProd[0]?.quantity+quantity) {
-        return JSON.stringify({ errors: true, amountInCart: exsistingProd[0].quantity});
+      if (item[0].unitInStock < exsistingProd[0]?.quantity + quantity) {
+        return JSON.stringify({ errors: true, amountInCart: exsistingProd[0].quantity });
       }
       exsistingcart[0].price += item[0].product.price * quantity
       exsistingcart[0].quantity = newamount

@@ -1,5 +1,6 @@
 import { Wishlist } from 'src/wishlist/entities/wishlist.entity';
 import { Order } from 'src/orders/entities/order.entity';
+import { Review } from 'src/product/entities/review.entity';
 export declare class User {
     name: string;
     password: string;
@@ -15,4 +16,5 @@ export declare class User {
     birthday: Date;
     wishlist: Wishlist[];
     orders: Order[];
+    reviews: Review[];
 }
