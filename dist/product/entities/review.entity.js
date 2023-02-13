@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Review = void 0;
+const user_entity_1 = require("../../users/entities/user.entity");
 const typeorm_1 = require("typeorm");
 const kindCombo_entity_1 = require("./kindCombo.entity");
 const product_entity_1 = require("./product.entity");
@@ -20,7 +21,11 @@ __decorate([
     __metadata("design:type", Number)
 ], Review.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => product_entity_1.Product, (prod) => prod.productDetails),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.name),
+    __metadata("design:type", user_entity_1.User)
+], Review.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => product_entity_1.Product, (prod) => prod.id),
     __metadata("design:type", product_entity_1.Product)
 ], Review.prototype, "product", void 0);
 __decorate([

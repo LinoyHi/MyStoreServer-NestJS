@@ -3,6 +3,8 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 import { Category } from "./category.entity";
 import { Img } from "./img.entity";
 import { ProductDetails } from "./productDetails.entity";
+import { Review } from "./review.entity";
+import { Sales } from "./sales.entity";
 
 @Entity()
 export class Product {
@@ -17,11 +19,9 @@ export class Product {
     productName:string
 
     @Column({
-        primary:true,
         nullable: false,
         type: 'varchar',
-        length: 200,
-        default:null
+        length: 200
     })
     mainImg:string
 
@@ -57,7 +57,9 @@ export class Product {
 
     sizes:string[]
 
-    prodDet:{color:string,size:string,quantity:number,id:number}[]
+    prodDet:{color:string,size:string,quantity:number,id:number, sale:Sales}[]
 
     wish:boolean
+
+    reviews: Review[]
 }

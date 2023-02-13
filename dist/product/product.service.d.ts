@@ -12,6 +12,7 @@ import { Category } from './entities/category.entity';
 import { CartDetailsRepository } from 'src/cart/cartDetails.repository';
 import { CartRepository } from 'src/cart/cart.repository';
 import { User } from 'src/users/entities/user.entity';
+import { ReviewRepository } from './repositories/review.repository';
 export declare class ProductsService {
     private productRipo;
     private kindRipo;
@@ -22,7 +23,8 @@ export declare class ProductsService {
     private wishRipo;
     private cartRipo;
     private cartDetRipo;
-    constructor(productRipo: ProductRepository, kindRipo: KindComboRepository, imgRipo: ImgsRepository, categoryRipo: CategoryRepository, ProductDetRipo: ProductDetailsRepository, userRipo: UserRepository, wishRipo: WishListRepository, cartRipo: CartRepository, cartDetRipo: CartDetailsRepository);
+    private reviewRipo;
+    constructor(productRipo: ProductRepository, kindRipo: KindComboRepository, imgRipo: ImgsRepository, categoryRipo: CategoryRepository, ProductDetRipo: ProductDetailsRepository, userRipo: UserRepository, wishRipo: WishListRepository, cartRipo: CartRepository, cartDetRipo: CartDetailsRepository, reviewRipo: ReviewRepository);
     create(createProductDto: CreateProductDto, imgs: {
         link: string;
         description: string;

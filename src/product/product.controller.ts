@@ -1,19 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Session, HttpException, HttpStatus } from '@nestjs/common';
 import { ProductsService } from './product.service';
-import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
-import { User } from 'src/users/entities/user.entity';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productService: ProductsService) { }
 
   @Post()
-  create(@Body() { product }, //product:{
-    // createProductDto: CreateProductDto, imgs: { link: string, description: string, product: Product | undefined }[],
-    // kind: { color: string, size: string, quantity: number }[],
-    // category: { name: string, parent: string }}
+  create(@Body() { product },
     @Session() session: Record<string, any>
   ) {
     if (session.user?.manager) {
@@ -32,8 +26,8 @@ export class ProductsController {
     return this.productService.findAll(undefined, session.user?.name);
   }
 
-  @Get('/catagories/:name')
-  async returnAllCatagories(@Param('name') userName:string) {
+  @Get('/catagories')
+  async returnAllCatagories() {
     return await this.productService.findAllCatagories()
   }
 

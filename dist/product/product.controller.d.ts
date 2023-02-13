@@ -10,7 +10,7 @@ export declare class ProductsController {
         quantity: any;
     }): Promise<string>;
     findAll(session: Record<string, any>): Promise<string>;
-    returnAllCatagories(userName: string): Promise<import("./entities/category.entity").Category[]>;
+    returnAllCatagories(): Promise<import("./entities/category.entity").Category[]>;
     findOne(id: string, session: Record<string, any>): Promise<string>;
     findCategory(category: string, session: Record<string, any>): Promise<string>;
     update(id: string, updateProductDto: UpdateProductDto): string;

@@ -11,10 +11,11 @@ import { CartRepository } from '../cart/cart.repository';
 import { CartDetailsRepository } from '../cart/cartDetails.repository';
 import { WishListRepository } from '../wishlist/wishlist.repository';
 import { UserRepository } from '../users/user.repository';
+import { ReviewRepository } from './repositories/review.repository';
 
 @Module({
   imports:[TypeOrmModule.forFeature([ProductRepository,ProductDetailsRepository,ImgsRepository,
-    KindComboRepository,CategoryRepository,CartRepository,CartDetailsRepository,WishListRepository,UserRepository])],
+    KindComboRepository,CategoryRepository,CartRepository,CartDetailsRepository,WishListRepository,UserRepository, ReviewRepository])],
   controllers: [ProductsController],
   providers: [ProductsService],
   exports:[ProductsService]

@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const class_validator_1 = require("class-validator");
 const wishlist_entity_1 = require("../../wishlist/entities/wishlist.entity");
 const order_entity_1 = require("../../orders/entities/order.entity");
+const review_entity_1 = require("../../product/entities/review.entity");
 let User = class User {
 };
 __decorate([
@@ -132,6 +133,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => order_entity_1.Order, (order) => order.user),
     __metadata("design:type", Array)
 ], User.prototype, "orders", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => review_entity_1.Review, (review) => review.user),
+    __metadata("design:type", Array)
+], User.prototype, "reviews", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

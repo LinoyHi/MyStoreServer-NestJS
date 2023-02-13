@@ -31,11 +31,9 @@ __decorate([
 ], Product.prototype, "productName", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        primary: true,
         nullable: false,
         type: 'varchar',
-        length: 200,
-        default: null
+        length: 200
     }),
     __metadata("design:type", String)
 ], Product.prototype, "mainImg", void 0);
