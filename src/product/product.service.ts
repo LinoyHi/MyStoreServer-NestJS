@@ -192,34 +192,35 @@ export class ProductsService {
   }
 
   async addToCart(id: number, user: User, quantity: number) {
-    let exsistingcart = await this.cartRipo.find({
-      username: { name: user.name }
-    })
+    let exsistingcart = await this.cartRipo.findOneByUsername(user.name)
+    if(!exsistingcart){
+      const createCart= this.cartRipo.create([{username:user,price:0,quantity:0}])
+      exsistingcart= await this.cartRipo.save(createCart)[0]
+    }
     const item = await this.ProductDetRipo.find({
-      select: ['product', 'id', 'unitInStock'],
       where: { id },
-      relations: ['product'],
+      relations: ['product'], 
     })
     const exsistingProd = await this.cartDetRipo.find({
       where: [{ product: item[0].id }],
       relations: ['product', 'cartid']
     })
-    if (exsistingcart.length) {
-      const newamount = exsistingcart[0].quantity + quantity
+    if (exsistingcart) {
+      const newamount = exsistingcart.quantity + quantity
       if (item[0].unitInStock < exsistingProd[0]?.quantity + quantity) {
         return JSON.stringify({ errors: true, amountInCart: exsistingProd[0].quantity });
       }
-      exsistingcart[0].price += item[0].product.price * quantity
-      exsistingcart[0].quantity = newamount
+      exsistingcart.price += item[0].product.price * quantity
+      exsistingcart.quantity = newamount
       this.cartRipo.save(exsistingcart)
     } else {
       const cart = this.cartRipo.create([{ username: { name: user.name }, quantity, price: item[0].product.price * quantity }])
       await this.cartRipo.save(cart)
-      exsistingcart = await this.cartRipo.find({ username: { name: user.name } })
+      exsistingcart = await this.cartRipo.findOneByUsername(user.name)
     }
     let cartDet;
     for (const product of exsistingProd) {
-      if (product.cartid.id === exsistingcart[0].id) {
+      if (product.cartid.id === exsistingcart.id) {
         cartDet = product
       }
     }
@@ -228,7 +229,7 @@ export class ProductsService {
       cartDet.quantity += quantity
     }
     else {
-      cartDet = this.cartDetRipo.create({ price: item[0].product.price * quantity, quantity, cartid: exsistingcart[0], product: item[0] })
+      cartDet = this.cartDetRipo.create({ price: item[0].product.price * quantity, quantity, cartid: exsistingcart, product: item[0] })
     }
     this.cartDetRipo.save(cartDet)
     return JSON.stringify({ errors: false })

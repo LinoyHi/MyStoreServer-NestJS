@@ -15,6 +15,7 @@ const class_validator_1 = require("class-validator");
 const wishlist_entity_1 = require("../../wishlist/entities/wishlist.entity");
 const order_entity_1 = require("../../orders/entities/order.entity");
 const review_entity_1 = require("../../product/entities/review.entity");
+const cart_entity_1 = require("../../cart/entities/cart.entity");
 let User = class User {
 };
 __decorate([
@@ -137,6 +138,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => review_entity_1.Review, (review) => review.user),
     __metadata("design:type", Array)
 ], User.prototype, "reviews", void 0);
+__decorate([
+    (0, typeorm_1.OneToOne)(() => cart_entity_1.Cart, (cart) => cart.username),
+    __metadata("design:type", cart_entity_1.Cart)
+], User.prototype, "cart", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

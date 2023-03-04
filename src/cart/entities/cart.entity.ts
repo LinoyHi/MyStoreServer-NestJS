@@ -7,8 +7,8 @@ export class Cart {
     @PrimaryGeneratedColumn()
     id:number 
 
-    @OneToOne(()=>User)
-    @JoinColumn({name:'userName'})
+    @OneToOne(()=>User,(user)=>user.cart)
+    @JoinColumn()
     username:User
 
     @Column()

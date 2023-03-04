@@ -20,8 +20,8 @@ __decorate([
     __metadata("design:type", Number)
 ], Cart.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(() => user_entity_1.User),
-    (0, typeorm_1.JoinColumn)({ name: 'userName' }),
+    (0, typeorm_1.OneToOne)(() => user_entity_1.User, (user) => user.cart),
+    (0, typeorm_1.JoinColumn)(),
     __metadata("design:type", user_entity_1.User)
 ], Cart.prototype, "username", void 0);
 __decorate([
