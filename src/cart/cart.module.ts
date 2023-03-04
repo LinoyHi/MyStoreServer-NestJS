@@ -6,9 +6,11 @@ import { CartRepository } from './cart.repository';
 import { CartDetailsRepository } from './cartDetails.repository';
 import { ProductModule } from '../product/product.module';
 import { ProductDetails } from '../product/entities/productDetails.entity';
+import { ProductRepository } from 'src/product/repositories/product.repository';
+import { CategoryRepository } from 'src/product/repositories/category.repository';
 
 @Module({
-  imports:[ProductModule,TypeOrmModule.forFeature([CartRepository, CartDetailsRepository,ProductDetails])],
+  imports:[ProductModule,TypeOrmModule.forFeature([CartRepository, CartDetailsRepository,ProductDetails, ProductRepository, CategoryRepository])],
   controllers: [CartController],
   providers: [CartService]
 })

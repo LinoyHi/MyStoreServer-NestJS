@@ -27,14 +27,32 @@ let CartController = class CartController {
     findAll() {
         return this.cartService.findAll();
     }
-    findOne(id) {
-        return this.cartService.findOne(+id);
+    findOne(username, session) {
+        var _a, _b;
+        if ((_a = session.user) === null || _a === void 0 ? void 0 : _a.name) {
+            if (((_b = session.user) === null || _b === void 0 ? void 0 : _b.name) == username) {
+                return this.cartService.findOneByUsername(username);
+            }
+        }
+        throw new common_1.HttpException('no user found', common_1.HttpStatus.NOT_FOUND);
+    }
+    findRecs(username, session) {
+        var _a, _b;
+        if ((_a = session.user) === null || _a === void 0 ? void 0 : _a.name) {
+            if (((_b = session.user) === null || _b === void 0 ? void 0 : _b.name) == username) {
+                return this.cartService.findRecommendedForUsername(username);
+            }
+        }
+        throw new common_1.HttpException('no user found', common_1.HttpStatus.NOT_FOUND);
     }
     update(id, updateCartDto) {
         return this.cartService.update(+id, updateCartDto);
     }
-    remove(id) {
-        return this.cartService.remove(+id);
+    remove(id, session) {
+        if (!session.user) {
+            throw new common_1.HttpException('no user is connected', common_1.HttpStatus.NOT_FOUND);
+        }
+        return this.cartService.remove(+id, session.user.name);
     }
 };
 __decorate([
@@ -51,12 +69,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CartController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)('/:username'),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.Session)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], CartController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Get)('recommended/:username'),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.Session)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], CartController.prototype, "findRecs", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
@@ -68,8 +95,9 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Session)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], CartController.prototype, "remove", null);
 CartController = __decorate([

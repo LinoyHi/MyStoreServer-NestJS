@@ -44,7 +44,8 @@ let UsersController = class UsersController {
         throw new common_1.HttpException(body.username, common_1.HttpStatus.NOT_FOUND);
     }
     logout(session) {
-        const name = session.user.name;
+        var _a;
+        const name = (_a = session.user) === null || _a === void 0 ? void 0 : _a.name;
         session.user = undefined;
         return `${name} has loged out`;
     }

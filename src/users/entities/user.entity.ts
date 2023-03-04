@@ -2,11 +2,13 @@ import {
     Column,
     Entity,
     OneToMany,
+    OneToOne,
 } from 'typeorm';
 import { IsEmail } from 'class-validator';
 import { Wishlist } from 'src/wishlist/entities/wishlist.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { Review } from 'src/product/entities/review.entity';
+import { Cart } from 'src/cart/entities/cart.entity';
 
 @Entity()
 export class User {
@@ -115,4 +117,7 @@ export class User {
 
     @OneToMany(()=>Review,(review)=>review.user)
     reviews:Review[]
+
+    @OneToOne(()=>Cart,(cart)=>cart.username)
+    cart:Cart
 }

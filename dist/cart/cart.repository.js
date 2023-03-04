@@ -10,8 +10,11 @@ exports.CartRepository = void 0;
 const typeorm_1 = require("typeorm");
 const cart_entity_1 = require("./entities/cart.entity");
 let CartRepository = class CartRepository extends typeorm_1.Repository {
-    findOneByUsername(username) {
-        return this.findOne({ username: { name: username } });
+    findOneByUsername(name) {
+        return this.findOne({
+            where: [{ username: { name } }],
+            relations: ['username']
+        });
     }
 };
 CartRepository = __decorate([

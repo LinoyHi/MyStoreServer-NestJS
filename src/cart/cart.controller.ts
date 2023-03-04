@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Session, HttpException, HttpStatus } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
@@ -17,9 +17,24 @@ export class CartController {
     return this.cartService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartService.findOne(+id);
+  @Get('/:username')
+  findOne(@Param('username') username: string, @Session() session: Record<string, any>) {
+    if(session.user?.name){
+      if(session.user?.name == username){
+        return this.cartService.findOneByUsername(username);
+      }
+    }
+    throw new HttpException ('no user found', HttpStatus.NOT_FOUND)
+  }
+
+  @Get('recommended/:username')
+  findRecs(@Param('username') username: string, @Session() session: Record<string, any>) {
+    if(session.user?.name){
+      if(session.user?.name == username){
+        return this.cartService.findRecommendedForUsername(username);
+      }
+    }
+    throw new HttpException ('no user found', HttpStatus.NOT_FOUND)
   }
 
   @Patch(':id')
@@ -28,7 +43,10 @@ export class CartController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(+id);
+  remove(@Param('id') id: string, @Session() session:Record<string,any>) {
+    if (!session.user) {
+      throw new HttpException('no user is connected', HttpStatus.NOT_FOUND);
+    }
+    return this.cartService.remove(+id,session.user.name);
   }
 }

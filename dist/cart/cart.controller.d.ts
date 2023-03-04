@@ -6,7 +6,8 @@ export declare class CartController {
     constructor(cartService: CartService);
     create(createCartDto: CreateCartDto): string;
     findAll(): string;
-    findOne(id: string): string;
+    findOne(username: string, session: Record<string, any>): Promise<string>;
+    findRecs(username: string, session: Record<string, any>): Promise<string>;
     update(id: string, updateCartDto: UpdateCartDto): string;
-    remove(id: string): string;
+    remove(id: string, session: Record<string, any>): Promise<string>;
 }

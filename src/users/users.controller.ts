@@ -41,7 +41,7 @@ export class UsersController {
 
   @Get('/logout')
   logout(@Session() session:Record<string,any>){
-    const name= session.user.name
+    const name= session.user?.name
     session.user= undefined
     return `${name} has loged out`
   }
