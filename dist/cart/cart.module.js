@@ -17,11 +17,12 @@ const product_module_1 = require("../product/product.module");
 const productDetails_entity_1 = require("../product/entities/productDetails.entity");
 const product_repository_1 = require("../product/repositories/product.repository");
 const category_repository_1 = require("../product/repositories/category.repository");
+const wishlist_repository_1 = require("../wishlist/wishlist.repository");
 let CartsModule = class CartsModule {
 };
 CartsModule = __decorate([
     (0, common_1.Module)({
-        imports: [product_module_1.ProductModule, typeorm_1.TypeOrmModule.forFeature([cart_repository_1.CartRepository, cartDetails_repository_1.CartDetailsRepository, productDetails_entity_1.ProductDetails, product_repository_1.ProductRepository, category_repository_1.CategoryRepository])],
+        imports: [product_module_1.ProductModule, typeorm_1.TypeOrmModule.forFeature([cart_repository_1.CartRepository, cartDetails_repository_1.CartDetailsRepository, productDetails_entity_1.ProductDetails, product_repository_1.ProductRepository, category_repository_1.CategoryRepository, wishlist_repository_1.WishListRepository])],
         controllers: [cart_controller_1.CartController],
         providers: [cart_service_1.CartService]
     })

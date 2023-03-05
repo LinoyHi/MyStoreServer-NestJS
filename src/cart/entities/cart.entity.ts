@@ -11,12 +11,6 @@ export class Cart {
     @JoinColumn()
     username:User
 
-    @Column()
-    price:number
-
-    @Column()
-    quantity:number
-
     @OneToMany(()=>CartDetails,(det)=>det.cartid)
     details:CartDetails[]
 }

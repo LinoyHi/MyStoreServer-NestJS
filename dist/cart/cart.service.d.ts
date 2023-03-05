@@ -6,6 +6,7 @@ import { CartDetailsRepository } from './cartDetails.repository';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { CategoryRepository } from 'src/product/repositories/category.repository';
+import { WishListRepository } from 'src/wishlist/wishlist.repository';
 export declare class CartService {
     private cartRipo;
     private cartdetRipo;
@@ -13,7 +14,8 @@ export declare class CartService {
     private productRipo;
     private categoryRipo;
     private productService;
-    constructor(cartRipo: CartRepository, cartdetRipo: CartDetailsRepository, productDetRipo: ProductDetailsRepository, productRipo: ProductRepository, categoryRipo: CategoryRepository, productService: ProductsService);
+    private wishRipo;
+    constructor(cartRipo: CartRepository, cartdetRipo: CartDetailsRepository, productDetRipo: ProductDetailsRepository, productRipo: ProductRepository, categoryRipo: CategoryRepository, productService: ProductsService, wishRipo: WishListRepository);
     create(createCartDto: CreateCartDto): string;
     findAll(): string;
     findOne(id: number): string;

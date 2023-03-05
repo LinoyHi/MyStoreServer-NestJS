@@ -8,9 +8,10 @@ import { ProductModule } from '../product/product.module';
 import { ProductDetails } from '../product/entities/productDetails.entity';
 import { ProductRepository } from 'src/product/repositories/product.repository';
 import { CategoryRepository } from 'src/product/repositories/category.repository';
+import { WishListRepository } from 'src/wishlist/wishlist.repository';
 
 @Module({
-  imports:[ProductModule,TypeOrmModule.forFeature([CartRepository, CartDetailsRepository,ProductDetails, ProductRepository, CategoryRepository])],
+  imports:[ProductModule,TypeOrmModule.forFeature([CartRepository, CartDetailsRepository,ProductDetails, ProductRepository, CategoryRepository, WishListRepository])],
   controllers: [CartController],
   providers: [CartService]
 })

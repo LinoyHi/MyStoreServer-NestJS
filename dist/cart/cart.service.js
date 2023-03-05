@@ -18,14 +18,16 @@ const productDet_repository_1 = require("../product/repositories/productDet.repo
 const cart_repository_1 = require("./cart.repository");
 const cartDetails_repository_1 = require("./cartDetails.repository");
 const category_repository_1 = require("../product/repositories/category.repository");
+const wishlist_repository_1 = require("../wishlist/wishlist.repository");
 let CartService = class CartService {
-    constructor(cartRipo, cartdetRipo, productDetRipo, productRipo, categoryRipo, productService) {
+    constructor(cartRipo, cartdetRipo, productDetRipo, productRipo, categoryRipo, productService, wishRipo) {
         this.cartRipo = cartRipo;
         this.cartdetRipo = cartdetRipo;
         this.productDetRipo = productDetRipo;
         this.productRipo = productRipo;
         this.categoryRipo = categoryRipo;
         this.productService = productService;
+        this.wishRipo = wishRipo;
     }
     create(createCartDto) {
         return 'This action adds a new cart';
@@ -51,17 +53,27 @@ let CartService = class CartService {
             const item = await this.productService.findOne(prodDet.product.id, username);
             products.push({ product: JSON.parse(item), price: prod.price, quantity: prod.quantity, size: prodDet.kinds.size, color: prodDet.kinds.color, maxQuantity: prodDet.unitInStock, productid: prodDet.kinds.id, cartid: cart.id });
         }
-        const cartitems = { items: products, totals: { quantity: cart.quantity, price: cart.price } };
+        const wishlist = await this.wishRipo.find({
+            select: ['product'],
+            where: { user: { name: username } },
+            relations: ['product']
+        });
+        const cartitems = { items: products, wishlist };
         return JSON.stringify(cartitems);
     }
     async findRecommendedForUsername(username) {
         const cart = await this.cartRipo.findOneByUsername(username);
         let recommend;
-        if (cart.quantity) {
-            const productsInCart = await this.cartdetRipo.find({
-                where: { cartid: { id: cart.id } },
-                relations: ['product', 'product.product', 'product.product.category']
-            });
+        const productsInCart = await this.cartdetRipo.find({
+            where: { cartid: { id: cart.id } },
+            relations: ['product', 'product.product', 'product.product.category']
+        });
+        const wishlist = await this.wishRipo.find({
+            select: ['product'],
+            where: { user: { name: username } },
+            relations: ['product']
+        });
+        if (productsInCart[0]) {
             const productsIDs = [];
             for (const cartDetProduct of productsInCart) {
                 if (!productsIDs.includes(cartDetProduct.product.product.id)) {
@@ -89,30 +101,26 @@ let CartService = class CartService {
             }
             item.inventory = quantity;
         }
-        return JSON.stringify(recommend);
+        return JSON.stringify({ recommend, wishlist });
     }
     update(id, updateCartDto) {
         return `This action updates a #${id} cart`;
     }
     async remove(id, username) {
-        const cart = await this.cartRipo.find({ username: { name: username } });
+        const cart = await this.cartRipo.findOneByUsername(username);
         const cartItems = await this.cartdetRipo.find({
-            where: { cartid: { id: cart[0].id } },
+            where: { cartid: { id: cart === null || cart === void 0 ? void 0 : cart.id } },
             relations: ['product', 'cartid']
         });
-        let amount;
-        let price;
-        for (const item of cartItems) {
-            if (item.product.id === id) {
-                amount = item.quantity;
-                price = item.price;
-                this.cartdetRipo.delete(item);
+        if (cartItems[0]) {
+            for (const item of cartItems) {
+                if (item.product.id === id) {
+                    this.cartdetRipo.delete(item);
+                }
             }
+            this.cartRipo.save(cart);
+            return 'removed from cart';
         }
-        cart[0].price -= price;
-        cart[0].quantity -= amount;
-        this.cartRipo.save(cart[0]);
-        return 'removed from cart';
     }
 };
 CartService = __decorate([
@@ -122,7 +130,8 @@ CartService = __decorate([
         productDet_repository_1.ProductDetailsRepository,
         product_repository_1.ProductRepository,
         category_repository_1.CategoryRepository,
-        product_service_1.ProductsService])
+        product_service_1.ProductsService,
+        wishlist_repository_1.WishListRepository])
 ], CartService);
 exports.CartService = CartService;
 //# sourceMappingURL=cart.service.js.map
