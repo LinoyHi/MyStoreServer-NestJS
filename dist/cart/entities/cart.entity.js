@@ -25,14 +25,6 @@ __decorate([
     __metadata("design:type", user_entity_1.User)
 ], Cart.prototype, "username", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
-], Cart.prototype, "price", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
-], Cart.prototype, "quantity", void 0);
-__decorate([
     (0, typeorm_1.OneToMany)(() => cartDetails_entity_1.CartDetails, (det) => det.cartid),
     __metadata("design:type", Array)
 ], Cart.prototype, "details", void 0);
